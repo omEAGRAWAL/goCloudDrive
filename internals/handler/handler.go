@@ -15,7 +15,7 @@ func HashPassword(password string) (string, error) {
 }
 
 func RegisterUser(w http.ResponseWriter, req *http.Request) {
-	w.Write([]byte("Hello World"))
+	w.Write([]byte("On register "))
 	if req.Method == "POST" {
 		body, err := io.ReadAll(req.Body)
 		if err != nil {
@@ -37,6 +37,18 @@ func RegisterUser(w http.ResponseWriter, req *http.Request) {
 	}
 }
 func Login(w http.ResponseWriter, req *http.Request) {
-	w.Write([]byte("Hello World"))
+	w.Write([]byte("on login page"))
+	if req.Method == "POST" {
+		body, err := io.ReadAll(req.Body)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+		}
+		re := models.NewUser()
+		err = json.Unmarshal(body, &re)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+		}
+
+	}
 
 }

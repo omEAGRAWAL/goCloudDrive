@@ -1,7 +1,11 @@
 package models
 
-type user struct {
-	name     string
-	email    string
-	password string
+type User struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func NewUser() *User {
+	return &User{}
 }

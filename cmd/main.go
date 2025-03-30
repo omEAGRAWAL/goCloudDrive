@@ -24,6 +24,7 @@ func main() {
 	fs := http.FileServer(http.Dir("internals/client/gocloudui/dist"))
 	// Handle root by serving index.html explicitly
 	http.Handle("/", http.StripPrefix("/", fs))
+	http.HandleFunc("/upload", handler.UploadFile)
 	http.HandleFunc("/api/register", handler.RegisterUser)
 	http.HandleFunc("/api/login", handler.Login)
 	log.Println("Server runnning on PORT", 8085)

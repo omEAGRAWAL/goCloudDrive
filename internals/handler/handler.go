@@ -7,6 +7,7 @@ import (
 	"gocloud/internals/services"
 	"golang.org/x/crypto/bcrypt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -64,6 +65,39 @@ func Login(w http.ResponseWriter, req *http.Request) {
 
 	}
 
+}
+func UploadFile(w http.ResponseWriter, req *http.Request) {
+	fmt.Println("File Upload Endpoint Hit")
+
+	// Parse our multipart form, 10 << 20 specifies a maximum
+	// upload of 10 MB files.
+	req.ParseMultipartForm(10 << 20)
+	file, handlr, err := req.FormFile("myFile")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer file.Close()
+	fmt.Printf("Uploaded File: %+v\n", handlr.Filename)
+	fmt.Printf("File Size: %+v\n", handlr.Size)
+	fmt.Printf("MIME Header: %+v\n", handlr.Header)
+
+	tempFile, err := ioutil.TempFile("temp-images", "upload-*.png")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer tempFile.Close()
+
+	// read all of the contents of our uploaded file into a
+	// byte array
+	fileBytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		fmt.Println(err)
+	}
+	// write this byte array to our temporary file
+	tempFile.Write(fileBytes)
+	// return that we have successfully uploaded our file!
+	fmt.Fprintf(w, "Successfully Uploaded File\n")
 }
 
 var conn = services.GetDb()

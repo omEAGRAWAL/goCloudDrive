@@ -52,3 +52,6 @@ func Login(w http.ResponseWriter, req *http.Request) {
 	}
 
 }
+func UploadFile(w http.ResponseWriter, req *http.Request) {
+
+}

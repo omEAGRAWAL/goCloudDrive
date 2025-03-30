@@ -7,7 +7,9 @@ import (
 )
 
 func main() {
+	http.HandleFunc("/upload", handler.UploadFile)
 	http.HandleFunc("/registor", handler.RegisterUser)
+	http.HandleFunc("/login", handler.Login)
 	log.Println("Server runnning on PORT", 8085)
 	err := http.ListenAndServe("localhost:8085", nil)
 	if err != nil {

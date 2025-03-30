@@ -2,7 +2,9 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"gocloud/internals/models"
+	"gocloud/internals/services"
 	"golang.org/x/crypto/bcrypt"
 	"io"
 	"log"
@@ -25,15 +27,21 @@ func RegisterUser(w http.ResponseWriter, req *http.Request) {
 				return
 			}
 		}
-		re := models.NewUser()
-		err = json.Unmarshal(body, &re)
+		usermod := models.NewUser()
+		err = json.Unmarshal(body, &usermod)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		hashedpass, _ := HashPassword(re.Password)
-		re.Password = hashedpass
-		log.Println(re)
+		hashedpass, _ := HashPassword(usermod.Password)
+		usermod.Password = hashedpass
+		log.Println(usermod)
+		err2 := services.InsertUser(conn, *usermod)
+		fmt.Println("stored in db")
+		if err2 != nil {
+			return
+		}
+
 	}
 }
 func Login(w http.ResponseWriter, req *http.Request) {
@@ -43,12 +51,19 @@ func Login(w http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 		}
+		//services.GetUserByEmail(conn,bo)
 		re := models.NewUser()
 		err = json.Unmarshal(body, &re)
+		fmt.Println(re)
+		data, err := services.GetUserByEmail(conn, re.Email)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+			fmt.Println(err)
+			return
 		}
+		fmt.Println(data)
 
 	}
 
 }
+
+var conn = services.GetDb()

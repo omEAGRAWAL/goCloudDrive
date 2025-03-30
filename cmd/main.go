@@ -4,31 +4,33 @@ import (
 	"gocloud/internals/handler"
 	"log"
 	"net/http"
-	"gocloud/internals/services"
-	"fmt"
-	"gocloud/internals/models"
 )
 
 func main() {
-	http.HandleFunc("/registor", handler.RegisterUser)
+
+	//conn := services.GetDb()
+
+	//err := services.InsertUser(conn, models.User{Name: "om", Email: "a5555l", Password: "om"})
+	//if err != nil {
+	//	fmt.Println(err)
+	//	return
+	//}
+	//email, err := services.GetUserByEmail(conn, "agraw333a55555l")
+	//if err != nil {
+	//	fmt.Println(err)
+	//	return
+	//}
+	//fmt.Println(email)
+	fs := http.FileServer(http.Dir("internals/client/gocloudui/dist"))
+	// Handle root by serving index.html explicitly
+	http.Handle("/", http.StripPrefix("/", fs))
+	http.HandleFunc("/api/register", handler.RegisterUser)
+	http.HandleFunc("/api/login", handler.Login)
 	log.Println("Server runnning on PORT", 8085)
-	err := http.ListenAndServe("localhost:8085", nil)
-	if err != nil {
-		log.Println("Error in starting the server", err)
+	err1 := http.ListenAndServe("localhost:8085", nil)
+	if err1 != nil {
+		log.Println("Error in starting the server", err1)
 		return
 	}
 
-	conn := services.GetDb()
-
-	err := services.InsertUser(conn, models.User{Name: "om", Email: "agraw333a55l", Password: "om"})
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	email, err := services.GetUserByEmail(conn, "agrawahhgygul")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(email)
 }
